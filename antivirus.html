@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShieldX Antivirus</title>
+  <style>
+    body {
+      margin: 0;
+      background: radial-gradient(circle at top, #09203f, #000);
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .window {
+      background: rgba(15, 25, 45, 0.9);
+      border-radius: 20px;
+      padding: 35px;
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.3);
+      width: 360px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #00e6ff;
+      margin-bottom: 20px;
+    }
+
+    input[type="file"] {
+      background: #112;
+      border: 1px solid #00e6ff;
+      padding: 8px;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .progress-box {
+      background: #0a192f;
+      border-radius: 10px;
+      height: 22px;
+      width: 100%;
+      overflow: hidden;
+      margin: 20px 0;
+      box-shadow: inset 0 0 5px rgba(0, 255, 255, 0.3);
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #00e6ff, #00ffaa);
+      transition: width 0.1s ease;
+    }
+
+    button {
+      background: linear-gradient(90deg, #00c6ff, #0072ff);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      padding: 10px 25px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: linear-gradient(90deg, #00ffaa, #00e6ff);
+      transform: scale(1.05);
+    }
+
+    .status {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 15px 0;
+    }
+
+    .details {
+      font-size: 14px;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <div class="window">
+    <h1>🛡️ ShieldX Antivirus</h1>
+    <input type="file" id="fileInput"><br><br>
+    <p class="status" id="status">No file scanned yet.</p>
+
+    <div class="progress-box">
+      <div class="progress-bar" id="bar"></div>
+    </div>
+
+    <p class="details" id="details">Upload a file and click “Scan File”.</p>
+    <button id="scanBtn">Scan File</button>
+  </div>
+
+  <script>
+    let scanCount = 0;
+
+    document.getElementById("scanBtn").addEventListener("click", () => {
+      const file = document.getElementById("fileInput").files[0];
+      const bar = document.getElementById("bar");
+      const status = document.getElementById("status");
+      const details = document.getElementById("details");
+      const button = document.getElementById("scanBtn");
+
+      if (!file) {
+        alert("Please select a file to scan.");
+        return;
+      }
+
+      button.disabled = true;
+      button.textContent = "Scanning...";
+      status.textContent = `Scanning "${file.name}"...`;
+      details.textContent = "Please wait, analyzing file...";
+      bar.style.width = "0%";
+      let progress = 0;
+
+      const scan = setInterval(() => {
+        progress += 4;
+        bar.style.width = progress + "%";
+
+        if (progress >= 100) {
+          clearInterval(scan);
+          scanCount++;
+
+          if (scanCount % 3 === 0) {
+            // Every 3rd scan finds a virus
+            bar.style.background = "linear-gradient(90deg, #ff0033, #ff6600)";
+            status.textContent = "⚠️ Threat Detected!";
+            details.textContent = `Malware found in "${file.name}". Quarantined successfully!`;
+          } else {
+            bar.style.background = "linear-gradient(90deg, #00e676, #00ffaa)";
+            status.textContent = "✅ No Threats Found";
+            details.textContent = `"${file.name}" is clean and safe.`;
+          }
+
+          button.disabled = false;
+          button.textContent = "Scan File";
+        }
+      }, 100);
+    });
+  </script>
+</body>
+</html>
